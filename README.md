@@ -1,9 +1,9 @@
 # Postfinance Challenge
 
-![png](1.png)
-![png](2.png)
-![png](3.png)
-![png](4.png)
+![png](pix/1.png)
+![png](pix/2.png)
+![png](pix/3.png)
+![png](pix/4.png)
 
 ## Requirenments
 
@@ -712,7 +712,7 @@ plt.plot(x, y, 'o',color='green');
 
 
     
-![png](output_22_0.png)
+![png](pix/output_22_0.png)
     
 
 
@@ -733,4 +733,4 @@ plt.plot(x, y, 'o',color='green');
 
 
     
-![png](output_24_0.png)
+![png](pix/output_24_0.png)
