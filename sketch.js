@@ -77,38 +77,40 @@ for(const [node, nbs] of neighbours.entries()){
 }
 
 const lowestCostNode = (costs, processed) => {
-  return Object.keys(costs).reduce((lowest, node) => {
-    if (lowest === null || costs[node] < costs[lowest]) {
-      if (!processed.includes(node)) {
+  let lowest = null;
+  for(node in costs){
+    if(!processed.has(node)){
+      if (lowest === null || costs[node] < costs[lowest]) {
         lowest = node;
       }
     }
-    return lowest;
-  }, null);
+  }
+  return lowest;
 };
 
 // based on https://gist.github.com/MoeweX/ab98efee9435b47529e3a6cb50c5b605
-const dijkstra = (graph, startNodeName, endNodeName) => {
-  // track the lowest cost to reach each node
-  let costs = {};
-  costs[endNodeName] = "Infinity";
-  Object.assign(costs, graph[startNodeName]);
-
-  // track paths
-  const parents = {endNodeName: null};
-  for (const child of Object.keys(graph[startNodeName])) {
-    parents[child] = startNodeName;
+const dijkstra = (graph, startNode, endNode) => {
+  // track nodes that have already been processed
+  const processed = new Set();
+  
+  // track best path, backward
+  const parents = {};
+  for (const adj in graph[startNode]) {
+    parents[adj] = startNode;
   }
 
-  // track nodes that have already been processed
-  const processed = [];
+  // track the lowest cost to reach each node
+  const costs = {};
+  costs[endNode] = "Infinity";
+  Object.assign(costs, graph[startNode]);
 
   let node = lowestCostNode(costs, processed);
+  
   while (node !== null) {
     const cost = costs[node]
     const adjs = graph[node]
-    for (const adj of Object.keys(adjs)) {
-      if (adj !== startNodeName) {
+    for (const adj in adjs) {
+      if (adj !== startNode) {
         const newCost = cost + adjs[adj]
         if (costs[adj] == null || costs[adj] > newCost) {
           costs[adj] = newCost
@@ -116,26 +118,23 @@ const dijkstra = (graph, startNodeName, endNodeName) => {
         }
       }
     }
-    processed.push(node);
+    processed.add(node);
     node = lowestCostNode(costs, processed);
   }
 
-  let optimalPath = [endNodeName]
-  let parent = parents[endNodeName];
-  while (parent) {
-    optimalPath.push(parent);
+  const bestPath = [endNode];
+  let parent = parents[endNode];
+  while (parent > startNode) {
+    bestPath.push(parent);
     parent = parents[parent];
   }
-  optimalPath.push(startNodeName);
-  optimalPath = optimalPath.reverse().map(Number);
+  bestPath.push(startNode);
 
   return {
-    distance: costs[endNodeName],
-    path: optimalPath
+    distance: costs[endNode],
+    path: bestPath.reverse().map(Number)
   };
 };
-
-
 
 const data = dijkstra(problem, post.id, char.id)
 console.log(data.distance, data.path);
